@@ -1,0 +1,37 @@
+{
+  "name": "napcat-docker",
+  "images": [
+    "docker.cnb.cool/3wlh/docker-repo/napcat-docker",
+    "mlikiowa/napcat-docker"
+  ],
+  "network": ["bridge","host","none"],
+  "restart": ["always","no","on-failure","unless-stopped"],
+  "ports": {
+    "port1": {
+      "name": "主机Web端口:",
+      "placeholder": 6099
+    },
+    "port2": {
+      "name": "主机API端口:",
+      "placeholder": 3000
+      
+    },
+    "port3": {
+      "name": "主机WS端口:",
+      "placeholder": 3001
+      
+    }
+  },
+  "volumes": {
+    "volume1": {
+      "name": "QQ数据目录:",
+      "placeholder": "/app/.config/QQ",
+      "value": "/etc/napcat/config/qq"
+    },
+    "volume2": {
+      "name": "NapCat配置目录:",
+      "placeholder": "/app/napcat/config",
+      "value": "/etc/napcat/config"
+    }
+  }
+}

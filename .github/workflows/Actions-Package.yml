@@ -37,6 +37,7 @@ on:
           - page-static
           - sse_msg-static
           - luci-app-scriptmsg
+          - luci-app-napcat
           - luci-app-photopea
           - luci-app-napcatapi
           - luci-app-dnsto
