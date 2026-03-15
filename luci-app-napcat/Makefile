@@ -26,7 +26,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=System Tools
 	TITLE:=LuCI support for napcat
 	PKGARCH:=all
-	DEPENDS:=@(aarch64||x86_64)
+	DEPENDS:=@(aarch64||x86_64) +libstdcpp
 endef
 
 define Package/$(PKG_NAME)/description
