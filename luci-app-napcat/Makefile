@@ -43,6 +43,7 @@ endef
 define Build/Prepare
 	echo -e "\033[1;32m Prepare：$(PKG_ARCH)\033[0m"
 	mkdir -pm 775 $(PKG_BUILD_DIR)
+	$(call Download/Files)
 	$(CP) ./luasrc $(PKG_BUILD_DIR)
 	chmod -R 755 $(PKG_BUILD_DIR)	
 endef
