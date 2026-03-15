@@ -4,23 +4,38 @@ function index()
     entry({"admin", "system", "scriptmsg"}, firstchild(), _("在线配置"), 90).dependent = true
     entry({"admin", "system", "scriptmsg", "settings"}, cbi("scriptmsg/settings"), _("Settings"), 10).leaf = true
     entry({"admin", "system", "scriptmsg", "execute"}, call("exec_msg"), _("执行命令"), 20).leaf = true
-    entry({"admin", "system", "scriptmsg", "cfg"}, call("exec_cfg"), nil).leaf = true
     entry({"admin", "system", "scriptmsg", "run"}, call("exec_run"), nil).leaf = true
     entry({"admin", "system", "scriptmsg", "stop"}, call("exec_stop"), nil).leaf = true
 end
 
-function exec_status()
-    -- 一行完成：检查PID存活并返回对应字符串
-    return (luci.sys.call("pidof /usr/share/ssemsg/sse_msg >/dev/null") == 0) and "true" or "false"
-end
-
-function exec_msg()
-    if exec_status() then
-        os.execute("/usr/share/ssemsg/sse_msg >/dev/null &")
+-- 生成随机端口的函数
+function get_port()
+    math.randomseed(os.time())
+    for _ = 1, 100 do
+        local port = math.random(1024, 65535)
+        local cmd = string.format("netstat -tunl | grep -qw :%d", port)
+        local ret = os.execute(cmd)
+        -- 返回非0表示端口未占用
+        if ret ~= 0 then
+            return port
+        end
     end
-    luci.template.render("scriptmsg/exec")
 end
 
+-- 生成32位随机字符串（字母+数字）
+function get_token()
+    -- 定义字符集（数字+小写字母，满足32位需求）
+    local charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+    local charset_len = #charset
+    local random_str = ""
+    -- 循环32次生成随机字符
+    for i = 1, 32 do
+        -- 随机选取字符集中的字符（math.random兼容所有Lua环境）
+        local random_idx = math.random(1, charset_len)
+        random_str = random_str .. charset:sub(random_idx, random_idx)
+    end
+    return random_str
+end
 
 -- 生成解密密钥（Key）的函数
 local function get_key()
@@ -52,15 +67,16 @@ local function get_key()
     return key  
 end
 
-local function read_file(file_path)
-    local file = io.open(file_path, "r")
-    local content = file and file:read("*a") or ""  -- 文件打开失败则内容为空
-    if file then file:close() end  -- 确保关闭文件句柄
-    -- 正则说明：^%s*（开头空白）(%S+)（第一段）%s+（分隔空格）(%S+)（第二段）
-    local part1, part2 = content:match("^%s*(%S+)%s+(%S+)")
-    return part1 or "", part2 or ""
+function exec_msg()
+    local port, token =  get_port(),get_token() 
+    local cmd = string.format("/usr/share/ssemsg/sse_msg -p %s -t %s >/dev/null &", port, token)
+    if os.execute(cmd) then
+         luci.template.render("scriptmsg/exec", {
+            Port = port,
+            Token = token
+        })
+    end
 end
-
 
 local function get_variable()
     local uci = require("luci.model.uci").cursor()
@@ -73,41 +89,82 @@ local function get_variable()
     return config
 end
 
-
-function exec_cfg()
-    luci.http.header("Content-Type", "application/json; charset=utf-8")
-    local port,token = read_file("/tmp/notify/notify.log")
-    local response = string.format('{"port": "%s", "token": "%s"}',port,token)
-    luci.http.write(response) 
-end
-
-
 -- 执行命令
 function exec_run()
     luci.http.header("Content-Type", "application/json; charset=utf-8")
-    --local exec = luci.http.formvalue("cmd")
-    --if not exec or exec == "" then 
-      --  luci.http.write("请输入命令") 
-        --return 
-    --end
-    local port,token = read_file("/tmp/notify/notify.log")
+    -- 读取原始 POST 数据
+    local request_body = luci.http.content()
+    if not request_body then
+        luci.http.write('{"msg":"空请求体"}')
+        return
+    end    
+    -- 解析 JSON
+    local json = require("luci.jsonc")
+    local ok, data = pcall(json.parse, request_body)
+    if not ok or type(data) ~= "table" then
+        luci.http.write(string.format('{"msg":"%s"}', data))
+        return
+    end
+    -- 提取字段
+    --local exec = data.cmd
+    local port = data.port
+    local token = data.token
     local cfg = get_variable()
+    
+    -- 参数验证
+    if not port or tonumber(port) == nil then
+        luci.http.write('{"msg":"端口无效"}')
+        return
+    end
+    -- 验证 token
+    if not token then
+        luci.http.write('{"msg":"token 无效"}')
+        return
+    end
+    -- 获取配置
     local url = cfg.url:gsub("'", "'\\''") -- 转义单引号防注入
     local key = cfg.key:gsub("'", "'\\''") -- 转义单引号防注入
+    
     local exec = string.format("wget -qO- '%s' | bash -s '%s'", url,key)
-    --local exec = string.format("ping 127.1 -c 20")
+    --local exec = "ping 127.1 -c 20"
     -- 后台执行
     local safe_exec = string.format(
         "wget -qO- --post-data='%s' http://127.0.0.1:%s/exec >/dev/null",
         exec,
         port)
     os.execute(safe_exec)
-    luci.http.write(string.format('{"msg":"%s"}', safe_exec))
+    luci.http.write(string.format('{"msg":"%s"}', token))
 end
 
 function exec_stop()
      luci.http.header("Content-Type", "application/json; charset=utf-8")
-    local port,token= read_file("/tmp/notify/notify.log")
+    -- 读取原始 POST 数据
+    local request_body = luci.http.content()
+    if not request_body then
+        luci.http.write('{"msg":"空请求体"}')
+        return
+    end    
+    -- 解析 JSON
+    local json = require("luci.jsonc")
+    local ok, data = pcall(json.parse, request_body)
+    if not ok or type(data) ~= "table" then
+        luci.http.write(string.format('{"msg":"%s"}', data))
+        return
+    end
+    -- 提取字段
+    --local exec = data.cmd
+    local port = data.port
+    local token = data.token
+    -- 参数验证
+    if not port or tonumber(port) == nil then
+        luci.http.write('{"msg":"端口无效"}')
+        return
+    end
+    -- 验证 token
+    if not token then
+        luci.http.write('{"msg":"token 无效"}')
+        return
+    end 
     local cmd = string.format(
         "wget -qO- --post-data='exec' http://127.0.0.1:%s/exec >/dev/null",
         port

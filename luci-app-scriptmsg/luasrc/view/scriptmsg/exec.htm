@@ -43,10 +43,6 @@
 
 .btn-run { background-color: #28a745; }
 .btn-stop { background-color: #dc3545; }
-.btn-run:disabled, .btn-stop:disabled { 
-    background-color: #6c757d; 
-    cursor: not-allowed;
-}
 
 #log {
     flex: 1;
@@ -80,8 +76,8 @@
     <div class="input-row">
         <input type="text" id="exec" class="cmd-input" placeholder="输入命令">
         <div class="btn-group">
-            <button class="btn btn-run" onclick="runCmd()" disabled>执行</button>
-            <button class="btn btn-stop" onclick="stopCmd()" disabled>停止</button>
+            <button class="btn btn-run" onclick="runCmd()">执行</button>
+            <button class="btn btn-stop" onclick="stopCmd()">停止</button>
         </div>
     </div>
     
@@ -93,63 +89,27 @@
 
 <script>
 // 初始化配置
-let CFG = {
-    sseUrl: "",
-    token: ""
-};
+const Port = "<%= Port %>";
+const Token = "<%= Token %>"; 
+console.log("TOKEN:", Token);
+const protocol = window.location.protocol;
+const openwrtIp = window.location.hostname;
+const sseUrl = `${protocol}//${openwrtIp}:${Port}`;
 
-// 异步获取LuCI配置接口的token和端口
-async function fetchConfig() {
-    try {
-        const response = await fetch('/cgi-bin/luci/admin/system/scriptmsg/cfg', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`接口请求失败：${response.status} ${response.statusText}`);
-        }
-
-        const configData = await response.json();
-        if (!configData.port || !configData.token) {
-            throw new Error("配置接口返回参数不完整");
-        }
-
-        const protocol = window.location.protocol;
-        const openwrtIp = window.location.hostname;
-        
-        CFG = {
-            sseUrl: `${protocol}//${openwrtIp}:${configData.port}`,
-            token: configData.token
-        };
-
-        document.getElementById("loading-tip").style.display = "none";
-        const iframe = document.getElementById("sse-iframe");
-        iframe.src = CFG.sseUrl;
-        iframe.style.display = "block";
-        document.querySelector(".btn-run").disabled = false;
-        document.querySelector(".btn-stop").disabled = false;
-
-    } catch (error) {
-        document.getElementById("loading-tip").textContent = `配置获取失败：${error.message}`;
-        console.error("获取配置出错：", error);
-    }
-}
+// 隐藏 loading，显示 iframe
+document.getElementById("loading-tip").style.display = "none";
+const iframe = document.getElementById("sse-iframe");
+iframe.src = sseUrl;
+iframe.style.display = "block";
 
 // 执行命令
 function sendCmdToIframe() {
     const cmd = document.getElementById("exec").value.trim();
     //if (!cmd) return alert("请输入命令");
-    if (!CFG.token || !CFG.sseUrl) {
-        return alert("配置未加载完成，请稍后重试");
-    }
-
-    fetch(`${CFG.sseUrl}/exec`, {
+    fetch(`${sseUrl}/exec`, {
         method: 'POST',
         headers: {
-            'X-Auth-Token': CFG.token,
+            'X-Auth-Token': Token,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: cmd
@@ -159,25 +119,40 @@ function sendCmdToIframe() {
 function runCmd() {
     var exec = document.getElementById("exec").value.trim();
     if (!exec) {
+        cmd = "RUN"
         //return;
     }
-    fetch('/cgi-bin/luci/admin/system/scriptmsg/run?cmd=' + encodeURIComponent(exec))
-    .then(r=> r.ok ? r.json() :Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
-    .then(status=> {console.log("✅ 执行成功:", status.msg);})
-    .catch(err => {
-        console.error("执行失败!");
-    });
+    fetch('/cgi-bin/luci/admin/system/scriptmsg/run', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            cmd: exec,
+            port: Port,
+            token: Token
+        })
+    })
+    .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
+    .then(status => console.log("✅ 执行成功:", status.msg))
+    .catch(err => console.error("执行失败!", err));
 }
 
 function stopCmd() {
-    fetch('/cgi-bin/luci/admin/system/scriptmsg/stop')
-        .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
-        .then(status=> {console.log("✅ 执行成功:", status.msg);})
-        .catch(err => {
-            console.error("执行失败!");
-        });
+    fetch('/cgi-bin/luci/admin/system/scriptmsg/stop', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            port: Port,
+            token: Token
+        })
+    })
+    .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
+    .then(status => console.log("✅ 执行成功:", status.msg))
+    .catch(err => console.error("执行失败!", err));
 }
-
 // 页面加载完成后自动获取配置
 document.addEventListener('DOMContentLoaded', fetchConfig);
 </script>
