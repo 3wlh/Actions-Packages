@@ -22,6 +22,23 @@ function get_port()
     end
 end
 
+-- 获取登录token
+function sess_token(sid) 
+    local ubus = require "ubus" 
+    local conn = ubus.connect() 
+    if not conn then 
+        return nil 
+    end 
+    local session_data = conn:call("session", "get", { ubus_rpc_session = sid }) 
+    conn:close() 
+    if session_data and session_data.values and session_data.values.token then 
+        return session_data.values.token
+    elseif session_data and session_data.token then
+        return session_data.token
+    end
+    return nil
+end
+
 -- 生成32位随机字符串（字母+数字）
 function get_token()
     -- 定义字符集（数字+小写字母，满足32位需求）
@@ -68,12 +85,25 @@ local function get_key()
 end
 
 function exec_msg()
+    local http = require "luci.http"
+    http.header("Content-Type", "text/html; charset=utf-8")
+    local sid = http.getcookie("sysauth") or http.getcookie("sysauth_http") or http.getcookie("sysauth_https") 
+    if not sid then
+        http.write("Error: unable to get session id") 
+        return 
+    end
+    local port, token = get_port(), sess_token(sid) -- get_port()  
+    if not token then
+        luci.template.render("napcat/app")
+        http.write("Error: failed to get token")
+        return
+    end
     local port, token =  get_port(),get_token() 
     local cmd = string.format("/usr/share/ssemsg/sse_msg -p %s -t %s >/dev/null &", port, token)
     if os.execute(cmd) then
          luci.template.render("scriptmsg/exec", {
             Port = port,
-            Token = token
+            --Token = token
         })
     end
 end

@@ -34,6 +34,7 @@ function get_token()
     return random_str
 end
 
+-- 获取登录token
 function sess_token(sid) 
     local ubus = require "ubus" 
     local conn = ubus.connect() 
