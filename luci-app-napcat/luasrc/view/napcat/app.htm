@@ -6,7 +6,8 @@
 <script>
 // 确保 token 已正确转义（由后端负责）
 const Port = "<%= Port %>";
-const Token = "<%= Token %>";
+//const Token = "<%= Token %>";
+const Token = "<%= token %>";
 console.log("TOKEN:", Token);
 const protocol = window.location.protocol;
 const openwrtIp = window.location.hostname;
