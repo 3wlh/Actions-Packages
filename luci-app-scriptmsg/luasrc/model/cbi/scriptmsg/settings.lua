@@ -1,35 +1,26 @@
 local uci = require "luci.model.uci".cursor()
-local io = require("io")
-local string = require("string")
 
 -- 生成解密密钥（Key）的函数
+-- 生成解密密钥（Key）的函数
 local function generate_key()
-    local mac = nil
-    -- 获取eth0 MAC
-    local ip_cmd = io.popen("ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'")
-    if ip_cmd then
-        mac = ip_cmd:read("*a"):gsub("%s+", "")
-        ip_cmd:close()
+    -- 获取eth0 MAC（优先ip命令）
+    local mac = luci.util.exec("ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'")
+    if mac then
+        mac = mac:gsub("%s+", "")
     end
-    -- 备用路径
+    -- 备用方法
     if not mac or mac == "" then
-        local mac_file = io.open("/sys/class/net/eth0/address", "r")
-        if mac_file then
-            mac = mac_file:read("*a"):gsub("%s+", "")
-            mac_file:close()
+        local mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null")
+        if mac then
+            mac = mac:gsub("%s+", "")
         end
     end
-    -- 生成解密Key
-    local key = ""
-    if mac and mac ~= "" then
-        local md5_cmd = io.popen("echo -n '" .. mac .. "' | md5sum | awk '{print $1}' | cut -c9-24")
-        if md5_cmd then
-            key = md5_cmd:read("*a"):gsub("%s+", "")
-            md5_cmd:close()
-        end
+    local safe_mac = mac:gsub("'", "'\\''")
+    local key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", safe_mac))
+    if key then
+        key = key:gsub("%s+", "")
     end
-    -- 同时返回MAC和解密Key
-    return mac, key  
+    return mac, key
 end
 
 -- 生成MAC和解密Key

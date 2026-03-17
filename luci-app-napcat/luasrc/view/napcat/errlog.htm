@@ -1,0 +1,20 @@
+<%+header%>
+<div class="alert alert-danger" style="border-left:10px solid#a94442;width:100%;flex:1;">
+    <h3 style="color:#ff0000;">
+        <i style="font-size:24px;"></i> 运行失败:
+    </h3>
+    <% if errors and #errors > 0 then %>
+    <ul style="padding-left:0px;">
+        <% for _, err in ipairs(errors) do %>
+        <li style="color:#a94442;"><i style="margin-right:40px;"></i>❌️错误: <%= err %></li>
+        <% end %>
+    </ul>
+    <% end %>
+</div>
+
+<script>
+    <% for _, err in ipairs(errors) do %>
+        console.error("❌️错误: <%= err %>");
+    <% end %>
+</script>
+<%+footer%>
