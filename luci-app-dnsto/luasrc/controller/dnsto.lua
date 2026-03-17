@@ -2,7 +2,7 @@ local name = "dnsto"
 module("luci.controller."..name, package.seeall) 
 
 function index()
-	entry({"admin", "services", "name"}, firstchild(), _("DNDTO"), 90).dependent = true
+	entry({"admin", "services", name}, firstchild(), _("DNDTO"), 90).dependent = true
 	entry({"admin", "services",name.."_status"}, call("Run_status"))
 	-- 注册菜单 
 	entry({"admin", "services", name, "settings"}, cbi("dnsto/settings"), _("Settings"), 10).leaf = true
