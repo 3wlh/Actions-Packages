@@ -32,23 +32,20 @@ on:
         type: choice
         options:
           - all
+          - luci-app-dnsto
+          - luci-app-scriptmsg
+          - luci-app-napcatapi
+          - luci-app-photopea
+          - luci-app-napcat
+          - luci-app-cifs-mount2
+          - luci-app-unishare
+          - luci-app-v2ray-server
+          - luci-app-sunpanel
           - api-static
           - sub-static
           - page-static
           - sse_msg-static
-          - luci-app-scriptmsg
-          - luci-app-napcat
-          - luci-app-photopea
-          - luci-app-napcatapi
-          - luci-app-dnsto
-          - luci-app-cifs-mount2
-          - luci-app-bypass
-          - luci-app-unishare
-          - luci-app-v2ray-server
-          - luci-app-sunpanel
           - sunpanel
-          - napcatapi-static
-          - status-ports
       
       version:
         description: |
