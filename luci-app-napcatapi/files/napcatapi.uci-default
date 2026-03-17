@@ -16,6 +16,5 @@ uci -q batch <<-EOF >/dev/null
 	commit ucitrack
 EOF
 
-/etc/init.d/${name} enable
-
+rm -f luci-indexcache.*
 exit 0

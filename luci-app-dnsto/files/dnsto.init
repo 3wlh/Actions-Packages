@@ -35,6 +35,6 @@ start() {
 
 stop() {
 		# log "结束运行"
-		kill -9 $(pidof $(basename ${PROG}) | sed "s/$$//g") 2>/dev/null
+		kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
 		echo "stopped ..."
 }

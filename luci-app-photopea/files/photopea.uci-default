@@ -1,20 +1,20 @@
 #!/bin/sh
-[ ! -f "/usr/share/ucitrack/luci-app-photopea.json" ] && {
-    cat > /usr/share/ucitrack/luci-app-photopea.json << EEOF
+name="photopea"
+[ ! -f "/usr/share/ucitrack/luci-app-${name}.json" ] && {
+    cat > /usr/share/ucitrack/luci-app-${name}.json << EOF
 {
-    "config": "photopea",
-    "init": "photopea"
+    "config": "${name}",
+    "init": "${name}"
 }
-EEOF
+EOF
 }
 
 uci -q batch <<-EOF >/dev/null
-	delete ucitrack.@photopea[-1]
-	add ucitrack photopea
-	set ucitrack.@photopea[-1].init=photopea
+	delete ucitrack.${name}
+	add ucitrack ${name}
+	set ucitrack.@${name}[-1].init=${name}
 	commit ucitrack
 EOF
 
-/etc/init.d/photopea enable
-
+rm -f luci-indexcache.*
 exit 0

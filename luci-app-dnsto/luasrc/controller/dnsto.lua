@@ -1,27 +1,22 @@
-module("luci.controller.dnsto", package.seeall)
+local name = "dnsto"
+module("luci.controller."..name, package.seeall) 
 
 function index()
-	entry({"admin", "services", "dnsto"}, firstchild(), _("DNDTO"), 90).dependent = true
-	entry({"admin", "services","dnsto_status"}, call("Run_status"))
+	entry({"admin", "services", "name"}, firstchild(), _("DNDTO"), 90).dependent = true
+	entry({"admin", "services",name.."_status"}, call("Run_status"))
 	-- 注册菜单 
-	entry({"admin", "services", "dnsto", "settings"}, cbi("dnsto/settings"), _("Settings"), 10).leaf = true
-	entry({"admin", "services", "dnsto", "parse"}, template("dnsto/parse"), _("Parse"), 20).leaf = true
-	entry({"admin", "services", "dnsto", "logs"}, template("dnsto/logs"), _("Logs"), 30).leaf = true
+	entry({"admin", "services", name, "settings"}, cbi("dnsto/settings"), _("Settings"), 10).leaf = true
+	entry({"admin", "services", name, "parse"}, template("dnsto/parse"), _("Parse"), 20).leaf = true
+	entry({"admin", "services", name, "logs"}, template("dnsto/logs"), _("Logs"), 30).leaf = true
 end
 
 function Run_status()
 	local uci  = require "luci.model.uci".cursor()
 	local port = tonumber(uci:get("dnsto", "config", "port"))
 	local token = uci:get("dnsto", "config", "token")
-	local file_bin = "dnsto"
-	local find_cmd = "find /usr/sbin/ -maxdepth 1 -name dnsto* -exec basename {} \\; | head -1"
-    local fp = io.popen(find_cmd, "r")
-    if fp then
-        file_bin = fp:read("*a"):gsub("^%s+", ""):gsub("%s+$", "")
-        fp:close()
-    end
+	local cmd = string.format("pgrep %s* >/dev/null", name)
 	local status = {
-		running = (luci.sys.call("pidof "..file_bin.." >/dev/null") == 0),
+		running = (luci.sys.call(cmd) == 0),
 		port = (port or 5063),
 		token = (token or "")
 	}
