@@ -41,22 +41,23 @@ function sess_token()
                 http.getcookie("sysauth_https") or
                 http.getcookie("sid")
     if not sid then
-        log_error("未获取到会话[ID]") 
+        log_error("未获取到会话[ID]")
         return
     end
-    local conn = ubus.connect() 
-    if not conn then 
-        return nil 
-    end 
+    local conn = ubus.connect()
+    if not conn then
+        log_error("未获取到[ubus]")
+        return nil
+    end
     local session_data = conn:call("session", "get", { ubus_rpc_session = sid }) 
-    conn:close() 
-    if session_data and session_data.values and session_data.values.token then 
+    conn:close()
+    if session_data and session_data.values and session_data.values.token then
         return session_data.values.token
     elseif session_data and session_data.token then
         return session_data.token
     end
     return nil
-end 
+end
 
 -- 生成解密密钥（Key）的函数
 local function get_key()

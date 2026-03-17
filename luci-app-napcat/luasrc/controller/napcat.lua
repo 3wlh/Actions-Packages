@@ -36,23 +36,24 @@ function sess_token()
                 http.getcookie("sysauth_https") or
                 http.getcookie("sid")
     if not sid then
-        log_error("未获取到会话[ID]") 
+        log_error("未获取到会话[ID]")
         return
     end
-    local conn = ubus.connect() 
-    if not conn then 
-        return nil 
-    end 
-    local session_data = conn:call("session", "get", { ubus_rpc_session = sid }) 
-    conn:close() 
-    if session_data and session_data.values and session_data.values.token then 
+    local conn = ubus.connect()
+    if not conn then
+        log_error("未获取到[ubus]")
+        return nil
+    end
+    local session_data = conn:call("session", "get", { ubus_rpc_session = sid })
+    conn:close()
+    if session_data and session_data.values and session_data.values.token then
         return session_data.values.token
     elseif session_data and session_data.token then
         return session_data.token
     end
     log_error("未获取到[token]")
     return nil
-end 
+end
 
 function get_data()
     return get_port(), sess_token()
