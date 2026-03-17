@@ -6,7 +6,7 @@ function index()
 		return
 	end
 	entry({"admin", "services", name}, firstchild(), _("NapCat Api"), 90).dependent = true
-	entry({"admin", "services",name"_status"}, call("Run_status"))
+	entry({"admin", "services",name.."_status"}, call("Run_status"))
 	-- 注册菜单 
 	entry({"admin", "services", name, "settings"}, cbi("napcatapi/napcatapi"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", name, "edit"}, template("napcatapi/edit"), _("Edit"), 20).leaf = true
