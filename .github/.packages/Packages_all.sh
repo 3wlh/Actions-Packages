@@ -5,6 +5,7 @@ mkdir -p "/tmp/packages/${ARCH}" && cd "/tmp/packages/${ARCH}"
 Openlist2 "${ARCH}" "${PACKAGES_PATH}"
 Nikki "${ARCH}" "${PACKAGES_PATH}"
 Openclash "${ARCH}" "${PACKAGES_PATH}"
+# Passwall "${ARCH}" "24.10" "${PACKAGES_PATH}"
 # Socat "${ARCH}" "${PACKAGES_PATH}"
 Releases "${ARCH}" "${PACKAGES_PATH}" "luci-app-napcatapi luci-app-scriptmsg luci-app-dnsto"
 Segmentation "${PACKAGES_PATH}" "https://dl.openwrt.ai/releases/24.10/packages/${ARCH}/kiddin9/" \
