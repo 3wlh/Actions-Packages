@@ -60,7 +60,7 @@ jobs:
           gzip -fk9c ${arch}/Packages > ${arch}/Packages.gz && \
           usign -S -m ${arch}/Packages -s /tmp/mime.key -x ${arch}/Packages.sig
         done
-        
+       
     - name: Git Erase Commits
       working-directory: ${{ steps.feed.outputs.path }}
       run: |
