@@ -1,17 +1,16 @@
+local name="edit"
 module("luci.controller.edit", package.seeall)
-
-local interface="edit"
 -- 定义要编辑的目标文件
 local TARGET_FILE = "/root/**_config.txt"
 
 function index()
     -- 注册到「服务」菜单
-    entry({"admin", "services", "edit"}, firstchild(), _("VSCode"), 90).dependent = true
+    entry({"admin", "services", name}, firstchild(), _("VSCode"), 90).dependent = true
     -- 页面路由
-    entry({"admin", "services", "edit", interface}, template("edit/edit"), _("Edit"), 10).leaf = true
+    entry({"admin", "services", name, name}, template(name.."/edit"), _("Edit"), 10).leaf = true
     -- 注册文件读写的 RPC 接口
-    entry({"admin", "services", "edit", interface.."_read"}, call("Read_File"), nil).leaf = true
-    entry({"admin", "services", "edit", interface.."_save"}, call("Save_File"), nil).leaf = true
+    entry({"admin", "services", name, name.."_read"}, call("Read_File"), nil).leaf = true
+    entry({"admin", "services", name, name.."_save"}, call("Save_File"), nil).leaf = true
 end
 
 -- 读取单个文件内容
