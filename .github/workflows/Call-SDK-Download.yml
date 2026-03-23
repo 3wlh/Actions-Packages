@@ -110,6 +110,7 @@ jobs:
           # ./scripts/feeds update -a >/dev/null 2>&1
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
           ./scripts/feeds install -a >/dev/null 2>&1
+          # ./scripts/feeds install luci >/dev/null 2>&1
    
       - name: Build Packages
         working-directory: ${{ env.CACHE_PATH }}
