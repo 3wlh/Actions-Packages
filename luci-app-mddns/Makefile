@@ -63,7 +63,7 @@ define Build/Prepare
 endef
 
 define Package/$(PKG_NAME)/postinst
-[ -n "${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
+[ -n "$${IPKG_INSTROOT}" ] || { rm -f /tmp/luci-indexcache.*
 	rm -rf /tmp/luci-modulecache/
 	/etc/init.d/rpcd reload 2>/dev/null
 	/etc/init.d/ucitrack reload 2>/dev/null
