@@ -25,7 +25,6 @@ endef
 define Build/Prepare
 	echo -e "\033[31mARCH：$(PKG_ARCH)\033[0m"
 	mkdir -p $(PKG_BUILD_DIR)
-	# 复制源码到编译目录（无空格路径）
 	chmod -R 755 ./luasrc ./root
 	$(CP) ./root $(PKG_BUILD_DIR)
 	$(CP) ./luasrc $(PKG_BUILD_DIR)
