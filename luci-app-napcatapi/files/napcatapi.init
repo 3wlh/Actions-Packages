@@ -26,6 +26,7 @@ start() {
 }
 
 stop() {
-	kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
+	# kill -9 $(pgrep ${NAME}* | sed "s/$$//g") 2>/dev/null
+	start-stop-daemon -K -q -s KILL -x "$PROG" 2>/dev/null
 	echo "Stopped..."
 }
