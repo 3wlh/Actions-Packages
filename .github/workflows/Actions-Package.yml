@@ -32,7 +32,7 @@ on:
         type: choice
         options:
           - all
-          - luci-app-dnsto
+          - luci-app-mddns
           - luci-app-scriptrun
           - luci-app-napcatapi
           - luci-app-photopea
