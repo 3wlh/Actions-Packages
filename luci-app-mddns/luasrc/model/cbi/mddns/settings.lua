@@ -79,6 +79,10 @@ m = Map(name, _("MultiDDNS Settings"),
     _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>MultiDDNS</a>" ..
     (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or ""))
 
+m.on_after_commit = function(self)
+    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+end
+
 -- 调用独立状态模板
 m:section(SimpleSection).template = name.."/status"
 
