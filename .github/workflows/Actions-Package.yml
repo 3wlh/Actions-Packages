@@ -33,7 +33,7 @@ on:
         options:
           - all
           - luci-app-dnsto
-          - luci-app-scriptmsg
+          - luci-app-scriptrun
           - luci-app-napcatapi
           - luci-app-photopea
           - luci-app-napcat
