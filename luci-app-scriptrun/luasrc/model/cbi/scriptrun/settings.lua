@@ -1,3 +1,4 @@
+local name="scriptrun"
 local uci = require "luci.model.uci".cursor()
 
 -- 生成解密密钥（Key）的函数
@@ -28,14 +29,14 @@ local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get("scriptmsg", "@general[0]")
+    local section = uci:get(name, "@general[0]")
     if not section then
-        local name = uci:add("scriptmsg", "general")
-        uci:reorder("scriptmsg", name, 0)
+        local config = uci:add(name, "general")
+        uci:reorder(name, config, 0)
     end
     -- 基础配置默认值
-    uci:set("scriptmsg", "@general[0]", "script_url", uci:get("scriptmsg", "@general[0]", "script_url") or 'http://example.com/script.sh')
-    uci:set("scriptmsg", "@general[0]", "script_key", uci:get("scriptmsg", "@general[0]", "script_key") or decrypt_key)
+    uci:set(name, "@general[0]", "script_url", uci:get(name, "@general[0]", "script_url") or 'http://example.com/script.sh')
+    uci:set(name, "@general[0]", "script_key", uci:get(name, "@general[0]", "script_key") or decrypt_key)
     return
 end
 

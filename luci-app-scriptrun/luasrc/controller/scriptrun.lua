@@ -1,10 +1,10 @@
-local name = "scriptmsg"
-module("luci.controller." .. name, package.seeall) 
+local name = "scriptrun"
+module("luci.controller."..name, package.seeall) 
 
 function index()
     entry({"admin", "system", name}, firstchild(), _("在线配置"), 90).dependent = true
-    entry({"admin", "system", name, "settings"}, cbi("scriptmsg/settings"), _("Settings"), 10).leaf = true
-    entry({"admin", "system", name, "execute"}, call("exec_msg"), _("执行命令"), 20).leaf = true
+    entry({"admin", "system", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
+    entry({"admin", "system", name, "execute"}, call("exec_cmd"), _("执行命令"), 20).leaf = true
     entry({"admin", "system", name, "run"}, call("exec_run"), nil).leaf = true
     entry({"admin", "system", name, "stop"}, call("exec_stop"), nil).leaf = true
 end
@@ -14,7 +14,7 @@ local errors = {}
 function log_error(msg)
     local safe_msg = msg:gsub("'", "'\\''")
     table.insert(errors, safe_msg)
-    local cmd = string.format("logger -t %s 'napcat error: %s'",name ,safe_msg )
+    local cmd = string.format("logger -t %s '%s error: %s'",name ,name, safe_msg )
     os.execute(cmd)
 end
 
@@ -46,7 +46,7 @@ function sess_token()
     end
     local conn = ubus.connect()
     if not conn then
-        log_error("未获取到[ubus]")
+        log_error("未获取到列表[ubus]")
         return nil
     end
     local session_data = conn:call("session", "get", { ubus_rpc_session = sid }) 
@@ -82,23 +82,15 @@ local function get_key()
 end
 
 function get_data()
-    local port = get_port()
-    if not port then
-        log_error("未获取到[Port]")
-    end
-    local token = sess_token()
-    if not token then
-        log_error("未获取到[token]")
-    end
-    return port, token
+    return port, token = get_port(), sess_token()
 end
 
-function exec_msg()
+function exec_cmd()
     local port, token = get_data()  
     if #errors > 0 then
         luci.template.render(name.."/errlog", { errors = errors })
         return
-    end  
+    end
     local cmd = string.format("/usr/share/ssemsg/sse_msg -p %s -t %s >/dev/null &", port, token)
     if os.execute(cmd) then
          luci.template.render(name.."/exec", {
@@ -108,7 +100,7 @@ function exec_msg()
     end
 end
 
-local function get_variable()
+local function get_config()
     local uci = require("luci.model.uci").cursor()
     -- 正确读取列表型配置节：@general[]（适配config general不带名称的场景）
     local config = {
@@ -138,7 +130,7 @@ function exec_run()
     --local exec = data.cmd
     local port = data.port
     local token = data.token
-    local cfg = get_variable()
+    local cfg = get_config()
     
     -- 参数验证
     if not port or tonumber(port) == nil then
@@ -198,5 +190,5 @@ function exec_stop()
         port
     )
     os.execute(cmd)
-    luci.http.write('{"msg":"停止命令已下发"}')
+    luci.http.write('{"msg":"已停止命令"}')
 end
