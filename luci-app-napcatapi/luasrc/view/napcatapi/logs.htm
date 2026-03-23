@@ -23,7 +23,7 @@ window.onload = function() {
         }
     }
     
-    function getNapcatStatus() {
+    function GetStatus() {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '<%=url("admin/services/napcatapi_status")%>', true);
         xhr.withCredentials = true;
@@ -50,7 +50,7 @@ window.onload = function() {
         };   
         xhr.send();
     }
-    getNapcatStatus();
+    GetStatus();
 };
 </script>
 <%+footer%>

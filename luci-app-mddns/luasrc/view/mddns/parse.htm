@@ -9,24 +9,23 @@ window.onload = function() {
     function updateLogUrl(st) {
         st = st || { running: false, port: 80, token: '' };
         const logIframe = document.getElementById('logIframe');
-        
         if (st.running && st.token) {
             const port = st.port && st.port !== 80 ? ':' + st.port : '';
-            const logUrl = 'http://' + window.location.hostname + port + '/logs?token=' + st.token + '&_=' + Date.now();
+            const logUrl = 'http://' + window.location.hostname + port + '?token=' + st.token + '&_=' + Date.now();
             if (logIframe.src !== logUrl) {
                 logIframe.src = logUrl;
                 console.log('更新日志地址：', logUrl);
             }
         } else {
             logIframe.src = 'about:blank';
-            logLoading.textContent = 'DNSTO 服务未运行或配置为空';
-            console.warn('DNSTO 未运行，跳过日志地址更新');
+            logLoading.textContent = 'MultiDDNS 服务未运行或配置为空';
+            console.warn('MultiDDNS 未运行，跳过日志地址更新');
         }
     }
-    
-    function getNapcatStatus() {
+
+    function GetStatus() {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', '<%=url("admin/services/dnsto_status")%>', true);
+        xhr.open('GET', '<%=url("admin/services/mddns_status")%>', true);
         xhr.withCredentials = true;
         xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -51,7 +50,7 @@ window.onload = function() {
         };   
         xhr.send();
     }
-    getNapcatStatus();
+    GetStatus();
 };
 </script>
 <%+footer%>

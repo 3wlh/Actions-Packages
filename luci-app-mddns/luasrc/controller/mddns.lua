@@ -1,14 +1,13 @@
-local name = "napcatapi"
+local name = "mddns"
 module("luci.controller."..name, package.seeall) 
 
 function index()
-	entry({"admin", "services", name}, firstchild(), _("NapCat Api"), 90).dependent = true
+	entry({"admin", "services", name}, firstchild(), _("MultiDDNS"), 90).dependent = true
 	entry({"admin", "services",name.."_status"}, call("Run_status"))
 	-- 注册菜单 
 	entry({"admin", "services", name, "settings"}, cbi(name.."/settings"), _("Settings"), 10).leaf = true
-	entry({"admin", "services", name, "edit"}, template(name.."/edit"), _("Edit"), 20).leaf = true
-	entry({"admin", "services", name, "napcat"}, template(name.."/napcat"), _("NapCat"), 30).leaf = true
-	entry({"admin", "services", name, "logs"}, template(name.."/logs"), _("Logs"), 40).leaf = true
+	entry({"admin", "services", name, "parse"}, template(name.."/parse"), _("Parse"), 20).leaf = true
+	entry({"admin", "services", name, "logs"}, template(name.."/logs"), _("Logs"), 30).leaf = true
 end
 
 function Run_status()
@@ -18,7 +17,7 @@ function Run_status()
 	local cmd = string.format("pgrep %s* >/dev/null", name)
 	local status = {
 		running = (luci.sys.call(cmd) == 0),
-		port = (port or 5663),
+		port = (port or 5063),
 		token = (token or "")
 	}
 	luci.http.prepare_content("application/json")

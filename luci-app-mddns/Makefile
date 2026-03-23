@@ -1,12 +1,12 @@
 # Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=luci-app-dnsto
-BIN_NAME:=dnsto
+PKG_NAME:=luci-app-mddns
+BIN_NAME:=mddns
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-LUCI_TITLE:=LuCI app for dnsto
+LUCI_TITLE:=LuCI app for mddns
 LUCI_LANG:=zh-cn
 
 ifeq ($(ARCH),aarch64)
@@ -17,7 +17,7 @@ ifeq ($(ARCH),x86_64)
 endif
 
 BIN_FILE:=$(BIN_NAME)
-BIN_URL:=https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_DNSTO/DNSTO-linux-$(PKG_ARCH)
+BIN_URL:=https://github.com/3wlh/Actions-Source/releases/download/GitHub-Actions_MDDNS/MDDNS-linux-$(PKG_ARCH)
 PKG_BUILD_DIR:=$(BUILD_DIR)/PKG_BUILD_$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
@@ -32,7 +32,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	NapCat Robot call the API.
+	A lightweight multi-DDNS automatic update utility for OpenWrt.
 endef
 
 define Download/Files
@@ -76,8 +76,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/conffiles
-/etc/dnsto/
-/etc/config/dnsto
+/etc/mddns/
+/etc/config/mddns
 endef
 
 define Package/$(PKG_NAME)/install
@@ -88,12 +88,12 @@ define Package/$(PKG_NAME)/install
 	$(CP) $(PKG_BUILD_DIR)/luasrc/* $(1)/usr/lib/lua/luci/
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/*.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/dnsto.init $(1)/etc/init.d/dnsto
+	$(INSTALL_BIN) ./files/mddns.init $(1)/etc/init.d/mddns
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/dnsto.config $(1)/etc/config/dnsto
+	$(INSTALL_CONF) ./files/mddns.config $(1)/etc/config/mddns
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) ./files/dnsto.uci-default $(1)/etc/uci-defaults/default
-	$(INSTALL_DIR) $(1)/etc/dnsto
+	$(INSTALL_BIN) ./files/mddns.uci-default $(1)/etc/uci-defaults/99-$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/mddns
 endef
 
 

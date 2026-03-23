@@ -1,13 +1,13 @@
 {
-	"luci-app-dnsto": {
-		"description": "Grant UCI access for luci-app-dnsto",
+	"luci-app-mddns": {
+		"description": "Grant UCI access for luci-app-mddns",
 		"read": {
-			"uci": [ "dnsto" ],
+			"uci": [ "mddns" ],
 			"ubus": {
 				"service": [ "list" ]
 			},
 			"file": {
-				"/usr/sbin/dnsto": [ "exec" ],
+				"/usr/sbin/mddns": [ "exec" ],
 				"/*": [ "read" ]
 			}
 		},

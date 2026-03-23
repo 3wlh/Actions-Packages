@@ -1,3 +1,4 @@
+local name="mddns"
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 
@@ -55,17 +56,17 @@ local device_mac, decrypt_key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get("dnsto", "config")
+    local section = uci:get(name, "config")
     if not section then
-        section = uci:set("dnsto", "config", "dnsto")
+        section = uci:set(name, "config", name)
     end
     -- 基础配置默认值
-    uci:set("dnsto", "config", "enabled", uci:get("dnsto", "config", "enabled") or 0)
-    uci:set("dnsto", "config", "port", uci:get("dnsto", "config", "port") or "5063")
-    uci:set("dnsto", "config", "path_config", uci:get("dnsto", "config", "path_config") or "/etc/dnsto")
-    uci:set("dnsto", "config", "pwd_config", uci:get("dnsto", "config", "pwd_config") or decrypt_key)
-    uci:set("dnsto", "config", "online_config", uci:get("dnsto", "config", "online_config") or "http[s]://")
-    uci:set("dnsto", "config", "token", uci:get("dnsto", "config", "token") or generate_token())
+    uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
+    uci:set(name, "config", "port", uci:get(name, "config", "port") or "5063")
+    uci:set(name, "config", "path_config", uci:get(name, "config", "path_config") or "/etc/"..name)
+    uci:set(name, "config", "pwd_config", uci:get(name, "config", "pwd_config") or decrypt_key)
+    uci:set(name, "config", "online_config", uci:get(name, "config", "online_config") or "http[s]://")
+    uci:set(name, "config", "token", uci:get(name, "config", "token") or generate_token())
     return
 end
 
@@ -73,16 +74,16 @@ end
 init_config()
 
 local m, s, o
-m = Map("dnsto", _("DNSTO Settings"), 
+m = Map(name, _("MultiDDNS Settings"), 
     _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..    
-    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>DNSTO</a>" ..
+    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>MultiDDNS</a>" ..
     (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or ""))
 
 -- 调用独立状态模板
-m:section(SimpleSection).template = "dnsto/status"
+m:section(SimpleSection).template = name.."/status"
 
 -- 全局配置区域
-s = m:section(TypedSection, "dnsto", _("Basic Settings"))
+s = m:section(TypedSection, name, _("Basic Settings"))
 s.addremove = false
 s.anonymous = true
 
@@ -98,7 +99,7 @@ o.description = _("Web Service Port")
 
 -- 配置文件路径
 o = s:option(Value, "path_config", _("Config Path"))
-o.default = "/etc/dnsto"
+o.default = "/etc/"..name
 o.rmempty = true
 o.datatype = "string"
 o.description = _('Configuration File Storage Path');

@@ -9,12 +9,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 # 插件名称
-msgid "DNDTO"
-msgstr "DNDTO解析"
+msgid "MultiDDNS"
+msgstr "MDDNS解析"
 
 # 页面标题
-msgid "DNSTO Settings"
-msgstr "DNSTO 设置"
+msgid "MultiDDNS Settings"
+msgstr "MDDNS 设置"
 msgid "Settings"
 msgstr "设置"
 msgid "Parse"
@@ -28,17 +28,19 @@ msgstr "一个轻量级的 DDNS 自动更新工具，支持多个 DNS 服务商�
 msgid "Official reference"
 msgstr "官方参考"
 # 服务状态
+msgid "Status"
+msgstr "状态"
 msgid "Collecting data..."
 msgstr "正在收集数据..."
-msgid "DNSTO: RUNNING"
-msgstr "DNSTO：运行中"
-msgid "DNSTO: NOT RUNNING"
-msgstr "DNSTO：未运行"
-msgid "DNSTO：DETECT ERROR"
-msgstr "DNSTO：检测异常"
+msgid "MDDNS: RUNNING"
+msgstr "MDDNS：运行中"
+msgid "MDDNS: NOT RUNNING"
+msgstr "MDDNS：未运行"
+msgid "MDDNS：DETECT ERROR"
+msgstr "MDDNS：检测异常"
 
 # 按钮文本
-msgid "Open Web index"
+msgid "Open Web parse"
 msgstr "打开解析页面"
 msgid "Open Web logs"
 msgstr "打开日志页面"
