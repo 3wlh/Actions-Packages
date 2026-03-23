@@ -1,3 +1,4 @@
+local name="napcatapi"
 local uci = require "luci.model.uci".cursor()
 
 -- 翻译函数
@@ -44,25 +45,17 @@ end
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get("napcatapi", "config")
+    local section = uci:get(name, "config")
     if not section then
-        section = uci:set("napcatapi", "config", "napcatapi")
+        section = uci:set(name, "config", name)
     end
     -- 基础配置默认值
-    uci:set("napcatapi", "config", "enabled", uci:get("napcatapi", "config", "enabled") or 0)
-    uci:set("napcatapi", "config", "port", uci:get("napcatapi", "config", "port") or "5663")
-    uci:set("napcatapi", "config", "path_config", uci:get("napcatapi", "config", "path_config") or "/etc/napcatapi")
-    uci:set("napcatapi", "config", "pwd_config", uci:get("napcatapi", "config", "pwd_config") or generate_key())
-    uci:set("napcatapi", "config", "online_config", uci:get("napcatapi", "config", "online_config") or "http[s]://")
-    uci:set("napcatapi", "config", "token", uci:get("napcatapi", "config", "token") or generate_token())
-    -- Token初始化
-    -- local token = uci:get("napcatapi", "config", "token")
-    -- if not token or token ~= 32 then
-        -- token = generate_token()
-        -- uci:set("napcatapi", "config", "token", token)
-        -- pcall(function() uci:save("napcatapi") end)
-        -- pcall(function() uci:commit("napcatapi") end)
-    -- end
+    uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
+    uci:set(name, "config", "port", uci:get(name, "config", "port") or "5663")
+    uci:set(name, "config", "path_config", uci:get(name, "config", "path_config") or "/etc/napcatapi")
+    uci:set(name, "config", "pwd_config", uci:get(name, "config", "pwd_config") or generate_key())
+    uci:set(name, "config", "online_config", uci:get(name, "config", "online_config") or "http[s]://")
+    uci:set(name, "config", "token", uci:get(name, "config", "token") or generate_token())
     return
 end
 
@@ -70,15 +63,19 @@ end
 init_config()
 
 local m, s, o
-m = Map("napcatapi", _("NapCat API"), 
+m = Map(name, _("NapCat API"), 
     _("NapCat Robot call the API configuration page.") .. "<br/>" ..
     _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>NapCat API</a>")
 
+m.on_after_commit = function(self)
+    os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
+end
+
 -- 调用独立状态模板
-m:section(SimpleSection).template = "napcatapi/status"
+m:section(SimpleSection).template = name.."/status"
 
 -- 全局配置区域
-s = m:section(TypedSection, "napcatapi", _("Basic Settings"))
+s = m:section(TypedSection, name, _("Basic Settings"))
 s.addremove = false
 s.anonymous = true
 
@@ -94,7 +91,7 @@ o.description = _("Web Service Port")
 
 -- 配置文件路径
 o = s:option(Value, "path_config", _("Config path"))
-o.default = "/etc/napcatapi"
+o.default = "/etc/"..name
 o.rmempty = true
 o.datatype = "string"
 o.description = _('Configuration File Storage Path');
