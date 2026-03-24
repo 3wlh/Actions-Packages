@@ -17,4 +17,5 @@ uci -q batch <<-EOF >/dev/null
 EOF
 
 rm -f luci-indexcache.*
+/etc/init.d/${name} enable
 exit 0
