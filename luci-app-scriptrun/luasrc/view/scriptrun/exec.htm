@@ -122,7 +122,7 @@ function runCmd() {
         cmd = "RUN"
         //return;
     }
-    fetch('/cgi-bin/luci/admin/system/scriptmsg/run', {
+    fetch('/cgi-bin/luci/admin/system/scriptrun/run', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -139,7 +139,7 @@ function runCmd() {
 }
 
 function stopCmd() {
-    fetch('/cgi-bin/luci/admin/system/scriptmsg/stop', {
+    fetch('/cgi-bin/luci/admin/system/scriptrun/stop', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

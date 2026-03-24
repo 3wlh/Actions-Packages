@@ -82,7 +82,7 @@ local function get_key()
 end
 
 function get_data()
-    return port, token = get_port(), sess_token()
+    return get_port(), sess_token()
 end
 
 function exec_cmd()
