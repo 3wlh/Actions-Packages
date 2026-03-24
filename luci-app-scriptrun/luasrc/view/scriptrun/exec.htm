@@ -153,8 +153,6 @@ function stopCmd() {
     .then(status => console.log("✅ 执行成功:", status.msg))
     .catch(err => console.error("执行失败!", err));
 }
-// 页面加载完成后自动获取配置
-document.addEventListener('DOMContentLoaded', fetchConfig);
 </script>
 <%+footer%>
 
