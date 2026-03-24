@@ -1,8 +1,8 @@
 # Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=sse-msg-static
-BIN_NAME:=sse_msg
+PKG_NAME:=sseconsole-static
+BIN_NAME:=sseconsole
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
@@ -53,9 +53,9 @@ endef
 
 define Package/$(PKG_NAME)/install
 	echo -e "\033[1;32m install \033[0m"
-	$(INSTALL_DIR) $(1)/usr/share/ssemsg
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/share/ssemsg/
-	chmod -R 755 $(1)/usr/share/ssemsg
+	$(INSTALL_DIR) $(1)/usr/share/sseconsole
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(BIN_FILE) $(1)/usr/share/sseconsole/
+	chmod -R 755 $(1)/usr/share/sseconsole
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
