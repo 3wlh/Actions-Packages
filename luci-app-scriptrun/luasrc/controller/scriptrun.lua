@@ -154,7 +154,7 @@ function exec_run()
         exec,
         port)
     os.execute(safe_exec)
-    luci.http.write(string.format('{"msg":"%s"}', safe_exec))
+    luci.http.write(string.format('{"msg":"%s"}', exec))
 end
 
 function exec_stop()
