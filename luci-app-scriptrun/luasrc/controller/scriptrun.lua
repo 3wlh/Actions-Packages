@@ -91,7 +91,7 @@ function exec_cmd()
         luci.template.render(name.."/errlog", { errors = errors })
         return
     end
-    local cmd = string.format("/usr/share/ssemsg/sse_msg -p %s -t %s >/dev/null &", port, token)
+    local cmd = string.format("/usr/share/sseconsole/sseconsole -p %s -t %s >/dev/null &", port, token)
     if os.execute(cmd) then
          luci.template.render(name.."/exec", {
             Port = port,
