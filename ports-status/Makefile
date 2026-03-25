@@ -1,11 +1,11 @@
 # Copyright (C) 2020-2026 3wlh <https://github.com/3wlh>
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=status-ports
+PKG_NAME:=ports-status
 PKG_VERSION:=$(shell date +%y.%m.%d)
 PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
-LUCI_TITLE:=app for status-ports
+LUCI_TITLE:=app for ports-status
 LUCI_LANG:=zh-cn
 
 include $(INCLUDE_DIR)/package.mk
