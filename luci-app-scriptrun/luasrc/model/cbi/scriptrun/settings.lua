@@ -43,7 +43,7 @@ end
 init_config()
 
 -- 全中文配置
-local m = Map("scriptmsg", "同步配置",
+local m = Map(name, "配置设置",
     "从远程服务器拉取SH配置脚本，使用设备Key解密后执行" .. 
     (device_mac ~= "" and "<br><b>MAC地址: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or "") ..
     (decrypt_key ~= "" and "<br><b>密钥Key: </b> <span style='color:#e74c3c;'>" .. decrypt_key .. "</span>" or ""))
