@@ -24,24 +24,21 @@ end
 -- 生成解密密钥（Key）的函数（保留原有逻辑，无错误）
 local function generate_key()
     -- 获取eth0 MAC（优先ip命令）
-    local mac = luci.util.exec("ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'")
-    if mac then
-        mac = mac:gsub("%s+", "")
-    end
+    local cmd="ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'"
+    local mac = luci.util.exec(cmd):gsub("%s+", "")
     -- 备用方法
     if not mac or mac == "" then
-        local mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null")
-        if mac then
-            mac = mac:gsub("%s+", "")
-        end
+        mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null"):gsub("%s+", "")
     end
-    local safe_mac = mac:gsub("'", "'\\''")
-    local key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", safe_mac))
-    if key then
-        key = key:gsub("%s+", "")
+    -- local mac = luci.util.exec("ethtool -P eth0 | grep -o '[0-9a-f:]\{17\}' 2>/dev/null")
+    local key = ""
+    if mac and mac ~= "" then
+        key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", mac)):gsub("%s+", "")
     end
-    return key
+    return mac, key
 end
+
+local mac, key = generate_key()
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
@@ -53,7 +50,7 @@ local function init_config()
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
     uci:set(name, "config", "port", uci:get(name, "config", "port") or "5663")
     uci:set(name, "config", "path_config", uci:get(name, "config", "path_config") or "/etc/napcatapi")
-    uci:set(name, "config", "pwd_config", uci:get(name, "config", "pwd_config") or generate_key())
+    uci:set(name, "config", "pwd_config", uci:get(name, "config", "pwd_config") or key)
     uci:set(name, "config", "online_config", uci:get(name, "config", "online_config") or "http[s]://")
     uci:set(name, "config", "token", uci:get(name, "config", "token") or generate_token())
     return
@@ -65,7 +62,9 @@ init_config()
 local m, s, o
 m = Map(name, _("NapCat API"), 
     _("NapCat Robot call the API configuration page.") .. "<br/>" ..
-    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>NapCat API</a>")
+    _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>NapCat API</a>" ..
+    (mac ~= "" and "<br><b>Mac: </b> <span style='color:#3498db;'>" .. mac .. "</span>" or "")..
+    (key ~= "" and "<br><b>Key: </b> <span style='color:#e74c3c;'>" .. key .. "</span>" or ""))
 
 m.on_after_commit = function(self)
     os.execute("/etc/init.d/"..name.." restart >/dev/null 2>&1 &")
@@ -98,7 +97,7 @@ o.description = _('Configuration File Storage Path');
 
 -- 解密密钥
 o = s:option(Value, "pwd_config", _("Decrypt KEY"))
-o.default = generate_key()
+o.default = key
 o.password = true
 o.rmempty = true
 o.description = _('Decryption Key[Auto MAC Generate]');

@@ -62,21 +62,16 @@ end
 -- 生成解密密钥（Key）的函数
 local function get_key()
     -- 获取eth0 MAC（优先ip命令）
-    local mac = luci.util.exec("ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'")
-    if mac then
-        mac = mac:gsub("%s+", "")
-    end
+    local cmd="ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'"
+    local mac = luci.util.exec(cmd):gsub("%s+", "")
     -- 备用方法
     if not mac or mac == "" then
-        local mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null")
-        if mac then
-            mac = mac:gsub("%s+", "")
-        end
+        mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null"):gsub("%s+", "")
     end
-    local safe_mac = mac:gsub("'", "'\\''")
-    local key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", safe_mac))
-    if key then
-        key = key:gsub("%s+", "")
+    -- local mac = luci.util.exec("ethtool -P eth0 | grep -o '[0-9a-f:]\{17\}' 2>/dev/null")
+    local key = ""
+    if mac and mac ~= "" then
+        key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", mac)):gsub("%s+", "")
     end
     return mac, key
 end
