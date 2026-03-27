@@ -17,7 +17,7 @@ function Run_status()
 	local token = uci:get(name, "config", "token")
 	local cmd = string.format("pgrep %s* >/dev/null", name)
 	local status = {
-		running = (luci.sys.call(cmd),
+		running = (luci.sys.call(cmd)==0),
 		port = (port or 8887),
 		token = (token or "")
 	}
