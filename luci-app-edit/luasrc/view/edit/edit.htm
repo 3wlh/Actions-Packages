@@ -1,5 +1,4 @@
 <%+header%>
-<% local interface = "edit" %>
 <style>
   .cbi-map {
     height: 100% !important;
@@ -195,7 +194,7 @@
   // 获取数据
   async function QueryFile(isFromSave = true) {
     var editorPos = saveEditorPosition();
-    fetch("<%=luci.dispatcher.build_url("admin", "services", "edit", interface.."_read")%>")
+    fetch("<%=luci.dispatcher.build_url("admin", "services", interface.."_read")%>")
     .then(res => {
         if (!res.ok) throw new Error('<%:Network response was not ok%>');
         return res.json();
@@ -241,7 +240,7 @@
       }
       const formData = new FormData();
       formData.append('content', configContent);
-      fetch("<%=luci.dispatcher.build_url("admin", "services", "edit", interface.."_save")%>", {
+      fetch("<%=luci.dispatcher.build_url("admin", "services", interface.."_save")%>", {
           method: 'POST',
           body: formData
       })
