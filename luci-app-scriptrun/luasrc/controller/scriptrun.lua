@@ -11,11 +11,9 @@ end
 
 -- 输出错误日志
 local errors = {}
-function log_error(msg)
-    local safe_msg = msg:gsub("'", "'\\''")
-    table.insert(errors, safe_msg)
-    local cmd = string.format("logger -t %s '%s error: %s'",name ,name, safe_msg )
-    os.execute(cmd)
+function log_msg(msg)
+    table.insert(errors, msg)
+    nixio.syslog(string.format("info", "%s: %s"), name,msg)
 end
 
 -- 生成随机端口的函数
@@ -34,22 +32,22 @@ end
 
 -- 获取登录token
 function sess_token() 
-    local http = require "luci.http"
-    local ubus = require "ubus"
-    local sid = http.getcookie("sysauth") or
-                http.getcookie("sysauth_http") or
-                http.getcookie("sysauth_https") or
-                http.getcookie("sid")
+    local sid = nil
+    local cookie_sid = {"sysauth", "sysauth_http", "sysauth_https", "sid"}
+    for _, name in ipairs(cookie_sid) do
+        sid = luci.http.getcookie(name)
+        if sid then break end
+    end
     if not sid then
-        log_error("未获取到会话[ID]")
-        return
+        log_msg("未获取到会话[ID]")
+        return nil
     end
     local conn = ubus.connect()
     if not conn then
-        log_error("未获取到列表[ubus]")
+        log_msg("无法连接[ubus]")
         return nil
     end
-    local session_data = conn:call("session", "get", { ubus_rpc_session = sid }) 
+    local session_data = conn:call("session", "get", { ubus_rpc_session = sid })
     conn:close()
     if session_data and session_data.values and session_data.values.token then
         return session_data.values.token
@@ -59,19 +57,20 @@ function sess_token()
     return nil
 end
 
+
 -- 生成解密密钥（Key）的函数
 local function get_key()
     -- 获取eth0 MAC（优先ip命令）
     local cmd="ip -o link show eth0 2>/dev/null | grep -Eo 'permaddr ([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | awk '{print $NF}'"
-    local mac = luci.util.exec(cmd):gsub("%s+", "")
+    local mac = luci.sys.exec(cmd):gsub("%s+", "")
     -- 备用方法
     if not mac or mac == "" then
-        mac = luci.util.exec("cat /sys/class/net/eth0/address 2>/dev/null"):gsub("%s+", "")
+        mac = luci.sys.exec("cat /sys/class/net/eth0/address 2>/dev/null"):gsub("%s+", "")
     end
-    -- local mac = luci.util.exec("ethtool -P eth0 | grep -o '[0-9a-f:]\{17\}' 2>/dev/null")
+    -- local mac = luci.sys.exec("ethtool -P eth0 | grep -o '[0-9a-f:]\{17\}' 2>/dev/null")
     local key = ""
     if mac and mac ~= "" then
-        key = luci.util.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", mac)):gsub("%s+", "")
+        key = luci.sys.exec(string.format("echo -n '%s' | md5sum | awk '{print $1}' | cut -c9-24", mac)):gsub("%s+", "")
     end
     return mac, key
 end
