@@ -90,7 +90,7 @@
 <script>
 // 初始化配置
 const Port = "<%= Port %>";
-const Token = "<%= token %>"; 
+const Token = "<%= token %>";
 console.log("TOKEN:", Token);
 const protocol = window.location.protocol;
 const openwrtIp = window.location.hostname;
@@ -120,37 +120,32 @@ function runCmd() {
     var exec = document.getElementById("exec").value.trim();
     if (!exec) {
         cmd = "RUN"
-        //return;
     }
-    fetch('/cgi-bin/luci/admin/system/scriptrun/run', {
+    fetch(L.url("admin", "system", "<%=Name%>", "run"), {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             cmd: exec,
             port: Port,
             token: Token
         })
     })
-    .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
+    .then(ret => ret.ok ? ret.json() : Promise.reject(`HTTP错误: ${ret.status} (${ret.statusText})`))
     .then(status => console.log("✅ 执行成功:", status.msg))
     .catch(err => console.error("执行失败!", err));
 }
 
 function stopCmd() {
-    fetch('/cgi-bin/luci/admin/system/scriptrun/stop', {
+    fetch(L.url("admin", "system", "<%=Name%>", "stop"), {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             port: Port,
             token: Token
         })
     })
-    .then(r => r.ok ? r.json() : Promise.reject(`HTTP错误: ${r.status} (${r.statusText})`))
-    .then(status => console.log("✅ 执行成功:", status.msg))
+    .then(ret => ret.ok ? ret.json() : Promise.reject(`HTTP错误: ${ret.status} (${ret.statusText})`))
+    .then(data => console.log("✅ 执行成功:",  data))
     .catch(err => console.error("执行失败!", err));
 }
 </script>
