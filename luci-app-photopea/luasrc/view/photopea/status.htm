@@ -64,7 +64,10 @@ window.onload = function() {
                 return `&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow('${url}', '${displayText}', ${width}, ${height})">${displayText}</a>`;
             };
             // 恢复按钮拼接
-            const app = createButton(parseUrl, 'Open Web app', 1200, 1100);
+            const app = String.format(
+                '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
+                baseUrl, _('Open Web app')
+            );
             const buttonEdit = createButton(parseUrl, 'Open Web edit', 1200, 1100);
             const buttonfiles = createButton(parseUrl, 'Open Web files', 880, 980);
             const buttonLogs = createButton(parseUrl, 'Open Web logs', 1200, 1050);
