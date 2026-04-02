@@ -12,8 +12,6 @@ while IFS= read -r LINE; do
     fi
 done   
 }
-
-
 Releases=$(cat "${3}/.releases.txt" 2>/dev/null)
 if [[ "${Releases}" =~ "Package:${1}"* ]]; then
     modify "Package:${1}" "${2}" "${3}/.releases.txt"
