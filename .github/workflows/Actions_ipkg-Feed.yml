@@ -27,7 +27,7 @@ jobs:
       uses: 3wlh/actions/openwrt/feed@main
       id: feed
       env:
-        url: ${{ env.Repo }}  
+        url: ${{ env.Repo }}
       
     - name: Download aarch64_generic Packages
       env: 
@@ -60,22 +60,21 @@ jobs:
           gzip -fk9c ${arch}/Packages > ${arch}/Packages.gz && \
           usign -S -m ${arch}/Packages -s /tmp/mime.key -x ${arch}/Packages.sig
         done
-       
+    
     - name: Git Erase Commits
       working-directory: ${{ steps.feed.outputs.path }}
       run: |
-        git config --global user.email "github-actions[bot]@github.com"
-        git config --global user.name "GitHub_Actions[bot]"
-        
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         # 添加所有文件
         git add -A
         # 提交更改
         git commit -am "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} update $(date +%Y-%m-%d" "%H:%M:%S)"
         # 清理优化Git仓库
-        # git gc --prune=now --aggressive >/dev/unll
-        # 强制提交到远程仓库
-        git push origin main
+    
+    - uses: 3wlh/actions/git/remove-files@main
+      with:
+        repo_url: ${{ env.Repo }}
+        repo_path: ${{ steps.feed.outputs.path }}
         
   jod_workflow: 
     needs: jobs_feed
