@@ -48,12 +48,12 @@ function openCustomWindow(url, windowName, width = 800, height = 600) {
 window.onload = function() {
     var statusElem = document.getElementById('status_id');
     if (!statusElem) return;
-    XHR.poll(5, L.url("admin", "services", "napcatapi_status"), null, function(status, data) {
+    XHR.poll(5,L.url("admin", "services", "napcatapi_status"), null, function(status, data) {
         if (data && data.running) {
             // 拼接URL
             const hostname = window.location.hostname;
             const baseUrl = 'http://' + hostname + ':' + data.port;
-            const interfaceUrl = baseUrl + '?token=' + data.token;
+            const editUrl = baseUrl + '?token=' + data.token;
             const logUrl = baseUrl + '/logs?token=' + data.token;
             const napcatUrl = baseUrl + '/napcat?token=' + data.token;
 
@@ -65,13 +65,13 @@ window.onload = function() {
             };
             
             // 恢复按钮拼接
-            const buttonEdit = createButton(parseUrl, 'Open Web edit', 1200, 1100);
-            const buttonLogs = createButton(parseUrl, 'Open Web logs', 1200, 1050);
-            const buttonNapcat = createButton(parseUrl, 'Open Web napcat', 880, 980);
-            tb.innerHTML = Status// + buttonEdit + buttonLogs + buttonNapcat;
+            const buttonEdit = createButton(editUrl, 'Open Web edit', 1200, 1100);
+            const buttonLogs = createButton(logUrl, 'Open Web logs', 1200, 1050);
+            const buttonNapcat = createButton(napcatUrl, 'Open Web napcat', 880, 980);
+            statusElem.innerHTML = Status// + buttonEdit + buttonLogs + buttonNapcat;
         } else {
             // 服务未运行（红色提示）
-            tb.innerHTML = '<span style="color:red"><strong>' + _('Program: NOT RUNNING') + '</strong></span>';
+            statusElem.innerHTML = '<span style="color:red"><strong>' + _('Program: NOT RUNNING') + '</strong></span>';
         }
     });
 };

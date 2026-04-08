@@ -9,7 +9,7 @@ window.onload = function() {
         const logIframe = document.getElementById('logIframe');
         if (data.running && data.token && data.port) {
             const url = window.location.protocol + "//" + window.location.hostname + ":"
-            const logUrl = url + data.port + '/edit?token=' + data.token + '&_=' + Date.now();
+            const logUrl = url + data.port + '/?token=' + data.token + '&_=' + Date.now();
             if (logIframe.src !== logUrl) {
                 logIframe.src = logUrl;
                 console.log('更新日志地址：', logUrl);

@@ -68,14 +68,14 @@ window.onload = function() {
                 '&#160;<a class="btn cbi-button" href="%s" target="_blank" rel="noreferrer noopener">%s</a>',
                 baseUrl, _('Open Web app')
             );
-            const buttonEdit = createButton(parseUrl, 'Open Web edit', 1200, 1100);
-            const buttonfiles = createButton(parseUrl, 'Open Web files', 880, 980);
-            const buttonLogs = createButton(parseUrl, 'Open Web logs', 1200, 1050);
+            const buttonEdit = createButton(editUrl, 'Open Web edit', 1200, 1100);
+            const buttonfiles = createButton(filesUrl, 'Open Web files', 880, 980);
+            const buttonLogs = createButton(logUrl, 'Open Web logs', 1200, 1050);
             
-            tb.innerHTML = status + app //+ buttonEdit + buttonfiles + buttonLogs ;
+            statusElem.innerHTML = status + app //+ buttonEdit + buttonfiles + buttonLogs ;
         } else {
             // 服务未运行（红色提示）
-            tb.innerHTML = '<span style="color:red"><strong>' + _('Photopea: NOT RUNNING') + '</strong></span>';
+            statusElem.innerHTML = '<span style="color:red"><strong>' + _('Photopea: NOT RUNNING') + '</strong></span>';
         }
     });
 };
@@ -83,7 +83,7 @@ window.onload = function() {
 
 <!-- 状态显示区域 -->
 <fieldset class="cbi-section">
-    <legend><%:Photopea Status%></legend>
+    <legend><%:Status%></legend>
     <p id="status_id">
         <em><%:Collecting data...%></em>
     </p>
