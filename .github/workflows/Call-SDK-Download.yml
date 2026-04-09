@@ -9,6 +9,8 @@ on:
         type: boolean  
       out:
         type: boolean
+      pack:
+        type: boolean
       cnb:
         type: boolean
       sdk:
@@ -124,6 +126,7 @@ jobs:
       - name: Create compress files
         id: compress_file
         env: 
+          pack: ${{ inputs.pack }}
           Package: ${{ env.PACKAGE }}
           Build_NAME: ${{ env.BUILD_FILENAME }}
           Build_PATH: ${{ env.CACHE_PATH }}/bin/packages/
@@ -135,8 +138,13 @@ jobs:
           echo "✅ 文件目录: ${file_path}"
           if [ -d "$file_path" ] && [ "$(ls -A $file_path)" ]; then
             test -d "${file_path}/tmp" && rm -fr "${file_path}/tmp"
-            # 只执行一次tar命令，保留文件结构
-            tar -zcf ${Output_FILE} -C $file_path .
+            if [ "${{ inputs.pack }}" == "true" ]; then
+              # 只执行一次tar命令，保留文件结构
+              tar -zcf ${Output_FILE} -C $file_path .
+            else
+              # 复制文件到输出目录
+              cp -f $file_path/* ${Output_FILE}/
+            fi
             test -d "${Build_PATH}" && rm -rf "${Build_PATH}"
             echo "✅ 压缩文件成功：${Output_FILE}"
             echo "status=success" >> $GITHUB_OUTPUT

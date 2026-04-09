@@ -55,6 +55,13 @@ on:
           - "23.05"
           - "24.10"
       
+      pack:
+        description: |
+          是否压缩打包gz
+        required: false
+        default: false
+        type: boolean
+      
       cnb:
         description: |
           是否上传CNB?
@@ -103,6 +110,7 @@ jobs:
     with:
       cache: ${{ inputs.cache }}
       feeds: ${{ inputs.feeds }}
+      pack: ${{ inputs.pack }}
       out: ${{ inputs.out }}
       sdk: ${{ inputs.sdk }}
       cnb: ${{ inputs.cnb }}
