@@ -57,7 +57,7 @@ on:
       
       pack:
         description: |
-          是否压缩打包gz
+          是否压缩打包成gz?
         required: false
         default: false
         type: boolean
