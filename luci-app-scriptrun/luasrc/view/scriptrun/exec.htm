@@ -83,7 +83,7 @@
     
     <div id="log">
         <div class="loading-tip" id="loading-tip">正在获取配置信息...</div>
-        <iframe id="sse-iframe" src="" style="display: none;"></iframe>
+        <iframe id="iframe" src="" style="display: none;"></iframe>
     </div>
 </div>
 
@@ -93,13 +93,13 @@ const Port = "<%= Port %>";
 const Token = "<%= token %>";
 console.log("TOKEN:", Token);
 const protocol = window.location.protocol;
-const openwrtIp = window.location.hostname;
-const sseUrl = `${protocol}//${openwrtIp}:${Port}`;
+const hostname = window.location.hostname;
+const link = `${protocol}//${hostname}:${Port}`;
 
 // 隐藏 loading，显示 iframe
 document.getElementById("loading-tip").style.display = "none";
-const iframe = document.getElementById("sse-iframe");
-iframe.src = sseUrl;
+const iframe = document.getElementById("iframe");
+iframe.src = link;
 iframe.style.display = "block";
 
 // 执行命令
