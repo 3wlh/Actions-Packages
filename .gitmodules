@@ -1,4 +1,0 @@
-[submodule "libfoo"]
-path = libfoo
-url = https://github.com/netswimer/luci-app-v2ray-server/luci-app-v2ray-server
-branch = main
