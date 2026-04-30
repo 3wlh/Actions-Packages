@@ -18,8 +18,7 @@ while IFS= read -r LINE; do
                 find "${PACKAGES_PATH}" -type f -name "${NAME}*" -exec rm -f {} \;
                 Download "${Download_URL}" "${PACKAGES_PATH}"
             else
-                # 5. 【修复】修复颜色代码 \e 无法被正确解析的问题
-                echo "$(date '+%Y-%m-%d %H:%M:%S')$'\e[1;32m' - 【${FILE}】插件无更新.$'\e[0m'"
+                echo -e "$(date '+%Y-%m-%d %H:%M:%S') - \e[1;32m【${FILE}】插件无更新.\e[0m"
             fi   
         fi
     done
