@@ -2,7 +2,6 @@
 PACKAGES_PATH="${1}"
 PACKAGES_URL="${2}"
 PACKAGES_NAME=(${3})
-
 wget -qO- "${PACKAGES_URL}/Packages" | \
 while IFS= read -r LINE; do
     for NAME in "${PACKAGES_NAME[@]}"; do
@@ -16,7 +15,7 @@ while IFS= read -r LINE; do
             fi
             Download_URL="${PACKAGES_URL}${FILE}"
             if [[ ! -f "${PACKAGES_PATH}/${FILE}" ]];then
-                find "${PACKAGES_PATH}" -type f -name "*${NAME}*" -exec rm -f {} \;
+                find "${PACKAGES_PATH}" -maxdepth 1 -type f -name "${NAME}*" -exec rm -f {} \;
                 Download "${PACKAGES_PATH}" "${Download_URL}"
             else
                 # 5. 【修复】修复颜色代码 \e 无法被正确解析的问题
