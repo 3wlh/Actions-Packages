@@ -5,9 +5,7 @@ PACKAGES_NAME=(${3})
 wget -qO- "${PACKAGES_URL}/Packages" | \
 while IFS= read -r LINE; do
     for NAME in "${PACKAGES_NAME[@]}"; do
-        # 1. 将 [ 改为 [[ 以更安全地支持通配符 *
         if [[ "$LINE" == "Filename:"*${NAME}* ]]; then
-            # 2. 给 ${NAME} 加上双引号防止报错
             FILE=$(echo "$LINE" | grep -Eo "${NAME}".*)
             if [[ -z "$FILE" ]]; then
                 # echo "No file found in line, skipping"
