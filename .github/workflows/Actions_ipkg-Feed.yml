@@ -64,7 +64,7 @@ jobs:
     - name: Git Erase Commits
       working-directory: ${{ steps.feed.outputs.path }}
       run: |
-        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+        Emoji=("📦" "🧹" "🔄" "🚀" "✨" "🔧" "🛠️" "⚡" "🎯" "♻️" "🔄" "📦")
         # 添加所有文件
         git add -A
         # 提交更改
