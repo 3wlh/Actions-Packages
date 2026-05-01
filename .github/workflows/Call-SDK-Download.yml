@@ -110,6 +110,8 @@ jobs:
         run: |
           # ✅ 复制源码文件
           # ./scripts/feeds update -a >/dev/null 2>&1
+          echo ${{ github.workspace }}
+          echo $(pwd)
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
           ./scripts/feeds install -a >/dev/null 2>&1
           # ./scripts/feeds install luci >/dev/null 2>&1
@@ -132,7 +134,7 @@ jobs:
           Build_PATH: ${{ env.CACHE_PATH }}/bin/packages/
           Output_FILE: ${{ env.OUTPUT_PATH }}/${{ env.BUILD_FILENAME }}
         run: |
-          # 处理编译文件
+          # ✅ 处理编译文件
           file=$(find "${Build_PATH}/" -name "*${Package}*.[ai]pk" | tail -1)
           file_path="$(dirname ${file})"
           echo "✅ 文件目录: ${file_path}"
