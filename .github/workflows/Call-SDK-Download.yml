@@ -110,8 +110,6 @@ jobs:
         run: |
           # ✅ 复制源码文件
           # ./scripts/feeds update -a >/dev/null 2>&1
-          echo ${{ github.workspace }}
-          echo $(pwd)
           find "${{ github.workspace }}" -maxdepth 1 -exec ln -s {} "package/" \;
           ./scripts/feeds install -a >/dev/null 2>&1
           # ./scripts/feeds install luci >/dev/null 2>&1
