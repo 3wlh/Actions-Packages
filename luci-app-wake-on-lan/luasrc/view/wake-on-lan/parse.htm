@@ -7,9 +7,9 @@
 window.onload = function() {
     function updateLink(data) {
         const iframe = document.getElementById('iframe');
-        if (data.running && data.token && data.port) {
+        if (data.running && data.port) {
             const url = window.location.protocol + "//" + window.location.hostname + ":"
-            const link = url + data.port + '&_=' + Date.now();
+            const link = url + data.port + '?&_=' + Date.now();
             if (iframe.src !== link) {
                 iframe.src = link;
                 console.log('更新日志地址：', link);
