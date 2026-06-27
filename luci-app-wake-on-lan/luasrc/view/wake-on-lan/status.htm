@@ -1,5 +1,5 @@
 <script type="text/javascript">
-// 自定义弹窗函数
+// 精简版自定义弹窗函数
 function openCustomWindow(url, windowName, width = 800, height = 600) {
     if (!url || !windowName) return console.error('❌ URL和窗口名称为必填参数');
 
@@ -22,29 +22,21 @@ function openCustomWindow(url, windowName, width = 800, height = 600) {
 window.onload = function() {
     var statusElem = document.getElementById('status_id');
     if (!statusElem) return;
-    XHR.poll(5,L.url("admin", "services", "<%=self.Name%>_status"), null, function(status, data) {
+    
+    XHR.poll(5, L.url("admin", "services", "<%=self.Name%>_status"), null, function(status, data) {
         if (data && data.running) {
-            // 拼接URL
             const hostname = window.location.hostname;
             const baseUrl = 'http://' + hostname + ':' + data.port;
-            const editUrl = baseUrl + '?token=' + data.token;
-            const logUrl = baseUrl + '/logs?token=' + data.token;
-            const napcatUrl = baseUrl + '/napcat?token=' + data.token;
-
-            // 运行状态文本（运行中-绿色）
+            
             const Status = '<span style="color:green"><strong>' + _('Program: RUNNING') + '</strong></span>';
             const createButton = (url, textKey, width, height) => {
                 const displayText = _(textKey);
                 return `&#160;<a class="btn cbi-button" href="javascript:void(0);" onclick="openCustomWindow('${url}', '${displayText}', ${width}, ${height})">${displayText}</a>`;
             };
             
-            // 恢复按钮拼接
-            const buttonEdit = createButton(editUrl, 'Open Web edit', 1200, 1100);
-            const buttonLogs = createButton(logUrl, 'Open Web logs', 1200, 1050);
-            const buttonNapcat = createButton(napcatUrl, 'Open Web napcat', 880, 980);
-            statusElem.innerHTML = Status// + buttonEdit + buttonLogs + buttonNapcat;
+            const buttonParse = createButton(baseUrl, 'Open Web parse', 900, 700);
+            statusElem.innerHTML = Status + buttonParse;
         } else {
-            // 服务未运行（红色提示）
             statusElem.innerHTML = '<span style="color:red"><strong>' + _('Program: NOT RUNNING') + '</strong></span>';
         }
     });
@@ -58,3 +50,4 @@ window.onload = function() {
         <em><%:Collecting data...%></em>
     </p>
 </fieldset>
+

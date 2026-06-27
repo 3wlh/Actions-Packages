@@ -44,7 +44,7 @@ local mac, key = generate_key()
 local function init_config()
     local section = uci:get(name, "config")
     if not section then
-        section = uci:set(name, "config", name)
+        section = uci:set(name, "config", "main")
     end
     -- 基础配置默认值
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
@@ -60,7 +60,7 @@ end
 init_config()
 
 local m, s, o
-m = Map(name, _("NapCat API"), 
+m = Map(name, _("Configuration"), 
     _("NapCat Robot call the API configuration page.") .. "<br/>" ..
     _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>NapCat API</a>" ..
     (mac ~= "" and "<br><b>Mac: </b> <span style='color:#3498db;'>" .. mac .. "</span>" or "")..
@@ -71,10 +71,12 @@ m.on_after_commit = function(self)
 end
 
 -- 调用独立状态模板
-m:section(SimpleSection).template = name.."/status"
+s = m:section(SimpleSection)
+s.template = name.."/status"
+s.Name = name
 
 -- 全局配置区域
-s = m:section(TypedSection, name, _("Basic Settings"))
+s = m:section(TypedSection, "main", _("Basic Settings"))
 s.addremove = false
 s.anonymous = true
 

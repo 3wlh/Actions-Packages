@@ -45,7 +45,7 @@ local device_mac, decrypt_key = generate_key()
 local function init_config()
     local section = uci:get(name, "config")
     if not section then
-        section = uci:set(name, "config", name)
+        section = uci:set(name, "config", "main")
     end
     -- 基础配置默认值
     uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
@@ -61,7 +61,7 @@ end
 init_config()
 
 local m, s, o
-m = Map(name, _("MultiDDNS Settings"), 
+m = Map(name, _("Configuration"), 
     _("A lightweight DDNS automatic update tool that supports multiple DNS service providers.") .. "<br/>" ..    
     _("Official reference") .. ": <a href='https://github.com/3wlh/' target='_blank'>MultiDDNS</a>" ..
     (device_mac ~= "" and "<br><b>MAC: </b> <span style='color:#3498db;'>" .. device_mac .. "</span>" or ""))
@@ -71,10 +71,12 @@ m.on_after_commit = function(self)
 end
 
 -- 调用独立状态模板
-m:section(SimpleSection).template = name.."/status"
+s = m:section(SimpleSection)
+s.template = name.."/status"
+s.Name = name
 
 -- 全局配置区域
-s = m:section(TypedSection, name, _("Basic Settings"))
+s = m:section(TypedSection, "main", _("Basic Settings"))
 s.addremove = false
 s.anonymous = true
 

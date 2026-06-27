@@ -1,42 +1,17 @@
 <script type="text/javascript">
 // 自定义弹窗函数
+// 自定义弹窗函数
 function openCustomWindow(url, windowName, width = 800, height = 600) {
-    // 入参校验
-    if (!url || !windowName) {
-        console.error('❌ URL和窗口名称为必填参数');
-        return null;
-    }
-    const validWidth = Math.max(300, typeof width === 'number' ? width : 800);
-    const validHeight = Math.max(200, typeof height === 'number' ? height : 600);
+    if (!url || !windowName) return console.error('❌ URL和窗口名称为必填参数');
 
-    // 计算居中位置
-    const screenWidth = window.screen.availWidth;
-    const screenHeight = window.screen.availHeight;
-    const left = Math.max(0, (screenWidth - validWidth) / 2);
-    const top = Math.max(0, (screenHeight - validHeight) / 2);
+    const left = (window.screen.availWidth - width) / 2;
+    const top = (window.screen.availHeight - height) / 2;
+    
+    const features = `width=${width},height=${height},left=${left},top=${top},resizable=no,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no`;
 
-    // 窗口特性配置
-    const features = [
-        `width=${validWidth}`,
-        `height=${validHeight}`,
-        `left=${left}`,
-        `top=${top}`,
-        'resizable=no',       // 禁止调整大小
-        'scrollbars=yes',     // 显示滚动条
-        'toolbar=no',         // 隐藏工具栏
-        'menubar=no',         // 隐藏菜单栏
-        'location=no',        // 隐藏地址栏（部分浏览器强制显示）
-        'status=no',          // 隐藏状态栏
-        'movable=no',         // 禁止拖动（仅Safari支持）
-        'directories=no'      // 兼容旧浏览器
-    ].join(',');
-
-    // 打开窗口并处理拦截
     try {
         const newWindow = window.open(url, windowName, features);
-        if (!newWindow) {
-            console.warn('🚫 弹窗被浏览器拦截，需开启弹窗权限');
-        }
+        if (!newWindow) console.warn('🚫 弹窗被浏览器拦截');
         return newWindow;
     } catch (err) {
         console.error('❌ 打开窗口出错：', err);
@@ -44,22 +19,12 @@ function openCustomWindow(url, windowName, width = 800, height = 600) {
     }
 }
 
-// 补全String.format函数
-if (!String.format) {
-    String.format = function(fmt) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        return fmt.replace(/%s/g, function() {
-            return args.shift() || '';
-        });
-    };
-}
-
 // 5秒轮询状态
 window.onload = function() {
     // 修复接口路径：对应控制器的正确路径
     var statusElem = document.getElementById('status_id');
     if (!statusElem) return;
-    XHR.poll(5, L.url("admin", "services", "mddns_status"), null, function(status, data) {
+    XHR.poll(5, L.url("admin", "services", "<%=self.Name%>_status"), null, function(status, data) {
         if (data && data.running) {
             // 拼接URL
             const hostname = window.location.hostname;
@@ -76,7 +41,7 @@ window.onload = function() {
             // 恢复按钮拼接
             const buttonParse = createButton(parseUrl, 'Open Web parse', 1200, 1100);
             const buttonLogs  = createButton(logUrl,   'Open Web logs',  1200, 1050);
-            statusElem.innerHTML = Status// + buttonParse + buttonLogs;
+            statusElem.innerHTML = Status;// + buttonParse + buttonLogs;
         } else {
             // 运行状态（未运行中-红色）
             statusElem.innerHTML = '<span style="color:red"><strong>' + _('Program: NOT RUNNING') + '</strong></span>';

@@ -1,0 +1,4 @@
+{
+    "config": "wake-on-lan",
+    "init": "wake-on-lan"
+}

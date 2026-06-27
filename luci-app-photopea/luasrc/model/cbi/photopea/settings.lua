@@ -1,3 +1,4 @@
+local name="photopea"
 local uci = require "luci.model.uci".cursor()
 local fs = require "nixio.fs"
 
@@ -23,14 +24,14 @@ end
 
 -- 初始化配置（确保模板有数据可用）
 local function init_config()
-    local section = uci:get("photopea", "config")
+    local section = uci:get(name, "config")
     if not section then
-        section = uci:set("photopea", "config", "photopea")
+        section = uci:set(name, "config", "main")
     end
     -- 基础配置默认值
-    uci:set("photopea", "config", "enabled", uci:get("photopea", "config", "enabled") or 0)
-    uci:set("photopea", "config", "port", uci:get("photopea", "config", "port") or "8887")
-    uci:set("photopea", "config", "token", uci:get("photopea", "config", "token") or generate_token())
+    uci:set(name, "config", "enabled", uci:get(name, "config", "enabled") or 0)
+    uci:set(name, "config", "port", uci:get(name, "config", "port") or "8887")
+    uci:set(name, "config", "token", uci:get(name, "config", "token") or generate_token())
     return
 end
 
@@ -38,15 +39,17 @@ end
 init_config()
 
 local m, s, o
-m = Map("photopea", _("Photopea"), 
+m = Map(name, _("Configuration"), 
     _("Photopea is online image editor.") .. "<br/>" ..
     _("Official website") .. ": <a href='www.Photopea.com' target='_blank'>Photopea</a>")
 
 -- 调用独立状态模板
-m:section(SimpleSection).template = "photopea/status"
+s = m:section(SimpleSection)
+s.template = name.."/status"
+s.Name = name
 
 -- 全局配置区域
-s = m:section(TypedSection, "photopea", _("Basic Settings"))
+s = m:section(TypedSection, "main", _("Basic Settings"))
 s.addremove = false
 s.anonymous = true
 

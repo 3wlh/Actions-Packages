@@ -21,6 +21,8 @@ msgid "Log"
 msgstr "日志"
 
 # 页面描述
+msgid "Configuration"
+msgstr "配置设置"
 msgid "Photopea is online image editor."
 msgstr "Photopea 是一款在线图片编辑器."
 msgid "Official website"

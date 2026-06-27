@@ -1,0 +1,20 @@
+{
+	"luci-app-wake-on-lan": {
+		"description": "Grant UCI access for luci-app-wake-on-lan",
+		"read": {
+			"uci": [ "wake-on-lan" ],
+			"ubus": {
+				"service": [ "list" ]
+			},
+			"file": {
+				"/usr/sbin/wake-on-lan": [ "exec" ],
+				"/*": [ "read" ]
+			}
+		},
+		"write": {
+			"file": {
+				"/*": [ "write" ]
+			}
+		}
+	}
+}

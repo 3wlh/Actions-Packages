@@ -23,6 +23,8 @@ msgid "Logs"
 msgstr "日志"
 
 # 页面描述
+msgid "Configuration"
+msgstr "配置设置"
 msgid "A lightweight DDNS automatic update tool that supports multiple DNS service providers."
 msgstr "一个轻量级的 DDNS 自动更新工具，支持多个 DNS 服务商。"
 msgid "Official reference"
