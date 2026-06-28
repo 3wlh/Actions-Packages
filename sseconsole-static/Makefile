@@ -8,10 +8,10 @@ PKG_RELEASE:=$(shell date +%H%M%S)
 PKG_MAINTAINER:=3wlh <3wlh.lh@gmail.com>
 
 ifeq ($(ARCH),aarch64)
-	PKG_ARCH:=aarch64_generic
+	PKG_ARCH:=arm64
 endif
 ifeq ($(ARCH),x86_64)
-	PKG_ARCH:=x86_64
+	PKG_ARCH:=amd64
 endif
 
 BIN_FILE:=$(BIN_NAME)
