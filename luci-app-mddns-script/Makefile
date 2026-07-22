@@ -111,8 +111,6 @@ define Package/mddns-aliyun-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
-	PKG_VERSION:=1
-	PKG_RELEASE:=1
 endef
 define Package/mddns-aliyun-script/description
 	DNS provider script for MDDNS - 阿里云 DNS (Aliyun)
@@ -126,8 +124,6 @@ define Package/mddns-cloudflare-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
-	PKG_VERSION:=1
-	PKG_RELEASE:=1
 endef
 define Package/mddns-cloudflare-script/description
 	DNS provider script for MDDNS - Cloudflare
@@ -141,8 +137,6 @@ define Package/mddns-dnshe-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
-	PKG_VERSION:=1
-	PKG_RELEASE:=1
 endef
 define Package/mddns-dnshe-script/description
 	DNS provider script for MDDNS - DNSHE
@@ -156,8 +150,6 @@ define Package/mddns-dnspod-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
-	PKG_VERSION:=1
-	PKG_RELEASE:=1
 endef
 define Package/mddns-dnspod-script/description
 	DNS provider script for MDDNS - DNSPod (腾讯云)
@@ -171,8 +163,6 @@ define Package/mddns-spaceship-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
-	PKG_VERSION:=1
-	PKG_RELEASE:=1
 endef
 define Package/mddns-spaceship-script/description
 	DNS provider script for MDDNS - Spaceship
@@ -205,6 +195,14 @@ endef
 
 # call BuildPackage - OpenWrt buildroot signature
 $(eval $(call BuildPackage,$(PKG_NAME)))
+
+# 脚本子包固定版本 (不跟随主包时间戳)
+# 必须放在主包 BuildPackage 之后、子包 BuildPackage 之前:
+# BuildPackage 先读取全局 PKG_VERSION/PKG_RELEASE 再 eval define 块,
+# 在此处覆盖全局变量可让所有子包都拿到固定版本 1-r1
+PKG_VERSION:=1
+PKG_RELEASE:=1
+
 $(eval $(call BuildPackage,mddns-aliyun-script))
 $(eval $(call BuildPackage,mddns-cloudflare-script))
 $(eval $(call BuildPackage,mddns-dnshe-script))
