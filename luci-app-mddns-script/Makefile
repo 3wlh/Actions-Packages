@@ -111,6 +111,8 @@ define Package/mddns-aliyun-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
+	PKG_VERSION:=1
+	PKG_RELEASE:=1
 endef
 define Package/mddns-aliyun-script/description
 	DNS provider script for MDDNS - 阿里云 DNS (Aliyun)
@@ -124,6 +126,8 @@ define Package/mddns-cloudflare-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
+	PKG_VERSION:=1
+	PKG_RELEASE:=1
 endef
 define Package/mddns-cloudflare-script/description
 	DNS provider script for MDDNS - Cloudflare
@@ -137,6 +141,8 @@ define Package/mddns-dnshe-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
+	PKG_VERSION:=1
+	PKG_RELEASE:=1
 endef
 define Package/mddns-dnshe-script/description
 	DNS provider script for MDDNS - DNSHE
@@ -150,6 +156,8 @@ define Package/mddns-dnspod-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
+	PKG_VERSION:=1
+	PKG_RELEASE:=1
 endef
 define Package/mddns-dnspod-script/description
 	DNS provider script for MDDNS - DNSPod (腾讯云)
@@ -163,6 +171,8 @@ define Package/mddns-spaceship-script
 	URL:=https://github.com/3wlh
 	DEPENDS:=+luci-app-mddns-script
 	PKGARCH:=all
+	PKG_VERSION:=1
+	PKG_RELEASE:=1
 endef
 define Package/mddns-spaceship-script/description
 	DNS provider script for MDDNS - Spaceship
